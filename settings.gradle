@@ -1,0 +1,2 @@
+rootProject.name='Textin'
+include ':app'
