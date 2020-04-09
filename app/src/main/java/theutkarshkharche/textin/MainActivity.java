@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import theutkarshkharche.textin.Fragments.ChatsFragment;
+import theutkarshkharche.textin.Fragments.ProfileFragment;
 import theutkarshkharche.textin.Fragments.UsersFragment;
 import theutkarshkharche.textin.Model.User;
 
@@ -82,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new ChatsFragment(),"Chats");
         viewPagerAdapter.addFragment(new UsersFragment(),"Users");
+        viewPagerAdapter.addFragment(new ProfileFragment(),"Profile");
+
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
