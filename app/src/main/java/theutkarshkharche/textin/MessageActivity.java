@@ -29,6 +29,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import theutkarshkharche.textin.Adapter.MessageAdapter;
@@ -54,6 +55,7 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent;
 
         ValueEventListener seenListener;
+    String userid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,7 @@ public class MessageActivity extends AppCompatActivity {
 
         Toolbar toolbar =findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +84,7 @@ public class MessageActivity extends AppCompatActivity {
         text_send=findViewById(R.id.text_send);
 
         intent = getIntent();
-        final String userid=intent.getStringExtra("userid");
+         userid=intent.getStringExtra("userid");
         fuser= FirebaseAuth.getInstance().getCurrentUser();
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,12 +101,14 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        assert userid != null;
         reference= FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user=dataSnapshot.getValue(User.class);
+                assert user != null;
                 username.setText(user.getUsername());
                 if (user.getImageURL().equals("default"))
                 {
@@ -133,6 +137,7 @@ public class MessageActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot:dataSnapshot.getChildren())
                 {
                     Chat chat=snapshot.getValue(Chat.class);
+                    assert chat != null;
                     if (chat.getReciever().equals(fuser.getUid()) && chat.getSender().equals(userid))
                     {
                         HashMap<String,Object> hashMap=new HashMap<>();
@@ -163,6 +168,24 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Chats").push().setValue(hashMap);
 
+        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
+                .child(fuser.getUid())
+                .child(userid);
+
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()){
+                    chatRef.child("id").setValue(userid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private  void readMessages(final String myid, final String userid, final String imageurl)
@@ -176,6 +199,7 @@ public class MessageActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot:dataSnapshot.getChildren())
                 {
                     Chat chat=snapshot.getValue(Chat.class);
+                    assert chat != null;
                     if (chat.getReciever().equals(myid)&& chat.getSender().equals(userid) || chat.getReciever().equals(userid) && chat.getSender().equals(myid))
                     {
                         mchat.add(chat);
