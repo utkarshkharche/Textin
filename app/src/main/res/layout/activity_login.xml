@@ -51,6 +51,18 @@
             android:background="@color/colorPrimaryDark"
             android:textColor="#fff"
             android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Forget Your Password?"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="end"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:id="@+id/forgot_password"
+            />
     </LinearLayout>
 
 </RelativeLayout>
